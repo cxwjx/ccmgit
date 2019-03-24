@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>vue component</title>
+<style>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+</style>
+<script src="./js/vue.min.js"></script>
+</head>
+
+<body>
+<div id="app">
+<h1>{{message1}}</h1>
+
+<button-counter></button-counter>
+<blog-post title="My journey with Vue"></blog-post>
+<blog-post title="Blogging with Vue"></blog-post>
+<blog-post title="Why Vue is so fun"></blog-post>
+
+<div :style="{ fontSize: postFontSize + 'em' }">
+    <blog-get
+      v-for="post in posts"
+      v-bind:key="post.id"
+      v-bind:post="post"
+      v-on:enlarge-text="onEnlargeText"
+    ></blog-get>
+</div>
+
+<button v-on:click="show = !show">
+    Toggle
+</button>
+<transition name="fade">
+    <p v-if="show">hello</p>
+</transition>	
+  	
+</div>
+<script>
+Vue.component('button-counter',{
+	data:function(){
+		return {
+			count:0
+		}
+	},
+	template:'<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+})
+Vue.component('blog-post',{
+	props:['title'],
+	template:'<h3>{{ title }}</h3>'
+})
+Vue.component('blog-get',{
+	props:['post'],
+	template:'<div class="blog-post">'+
+		      '<h3>{{ post.title }}</h3>'+
+		      '<button v-on:click="$emit(\'enlarge-text\',0.1)">Enlarge text</button>'+
+		      '<div v-html="post.content"></div>'+
+	    	  '</div>'
+})
+
+var vue = new Vue({
+	el:"#app",
+	data:{
+		message1:"Hello Vue Component",
+		postFontSize:1,
+		show:true,
+		posts:[
+			{id:1,text:'google',content:'很好啊'},
+			{id:2,text:'huawei',content:'吹牛皮'},
+			{id:3,text:'apple',content:'流畅'}
+		]
+	},
+	methods:{
+		onEnlargeText:function(el){
+			this.postFontSize += el;
+		}
+	}
+})
+
+</script>
+</body>
+</html>
